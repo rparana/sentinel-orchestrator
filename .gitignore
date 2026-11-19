@@ -1,0 +1,62 @@
+# ==============================================================================
+# Sentinel Orchestrator - Root .gitignore (.NET 10, Aspire, Angular 22, pnpm)
+# ==============================================================================
+
+# OS / System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDEs & Editors
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.swp
+*.swo
+*~
+
+# Visual Studio Code (preserve shared workspace config)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+
+# .NET / MSBuild / NuGet / Aspire
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+TestResults/
+[Cc]overage/
+*.trx
+*.coverage
+*.coveragexml
+*.binlog
+*.Build.log
+.aspire/
+aspire-output/
+appsettings.*.local.json
+secrets.json
+
+# Node / Angular / pnpm
+node_modules/
+dist/
+.angular/
+out-tsc/
+*.tsbuildinfo
+.pnpm-store/
+.vitest/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment & local secrets
+.env
+.env.*
+!.env.example

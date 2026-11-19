@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Sentinel.Application\Sentinel.Application.csproj" />
+    <ProjectReference Include="..\Sentinel.Domain\Sentinel.Domain.csproj" />
+  </ItemGroup>
+</Project>

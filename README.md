@@ -157,7 +157,7 @@ dotnet test tests/Sentinel.Domain.Tests
 dotnet test tests/Sentinel.Integration.Tests
 
 # Run Angular unit tests
-npm test --prefix src/sentinel-web
+pnpm --dir src/sentinel-web test
 ```
 
 ## 👤 Author

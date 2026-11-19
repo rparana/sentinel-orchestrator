@@ -1,0 +1,3 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Pure Domain layer: zero external NuGet dependencies -->
+</Project>
