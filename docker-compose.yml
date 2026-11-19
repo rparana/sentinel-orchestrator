@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: sentinel-postgres
+    environment:
+      POSTGRES_DB: sentineldb
+      POSTGRES_USER: sentinel
+      POSTGRES_PASSWORD: sentinel_dev_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentinel -d sentineldb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: sentinel-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  sentinel-api:
+    build:
+      context: .
+      dockerfile: src/Sentinel.Api/Dockerfile
+    container_name: sentinel-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__sentineldb: Host=postgres;Port=5432;Database=sentineldb;Username=sentinel;Password=sentinel_dev_pass
+      ConnectionStrings__redis: redis:6379
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  sentinel-web:
+    build:
+      context: src/sentinel-web
+      dockerfile: Dockerfile
+    container_name: sentinel-web
+    ports:
+      - "4200:80"
+    depends_on:
+      sentinel-api:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  redis_data:
