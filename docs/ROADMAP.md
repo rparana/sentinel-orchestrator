@@ -26,17 +26,17 @@
 ## Milestone 1: Core Domain & Deterministic Policy Guardrails (`Sentinel.Domain`)
 **Goal:** Implement the pure C# finite state machine, audit log model, and deterministic Policy Engine with 100% unit test coverage. (Ref: `ADR-001`)
 
-* [ ] **1.1 Workflow Aggregate & Finite State Machine**
+* [x] **1.1 Workflow Aggregate & Finite State Machine**
   * Implement `WorkflowInstance`, `WorkflowStep`, `WorkflowAuditEntry`, `WorkflowStatus`, `PolicyVerdict`, and `RiskTier`.
   * Enforce strict state transition guards (`Pending` -> `Running` -> `EvaluatingPolicy` -> `AwaitingApproval` | `BlockedByPolicy` | `ExecutingStep` -> `Completed` | `Failed` | `Rejected`).
-* [ ] **1.2 Deterministic Policy Engine**
+* [x] **1.2 Deterministic Policy Engine**
   * Implement `IPolicyEvaluator` and `DeterministicPolicyEngine` with explicit rules:
     * `Deny`: Hard-blocked destructive actions (`DeleteProductionVolume`, `DropDatabase`, `DisableFirewall`) or empty proposals.
     * `RequireApproval`: `High` or `Critical` risk actions targeting `production`, or any `Critical` risk action.
     * `Allow`: Low/medium risk actions within safe boundaries.
-* [ ] **1.3 Domain Unit Tests (`Sentinel.Domain.Tests`)**
+* [x] **1.3 Domain Unit Tests (`Sentinel.Domain.Tests`)**
   * Cover all valid transitions, invalid transition exceptions, audit trail generation, and policy verdicts (`Allow`, `RequireApproval`, `Deny`).
-* [ ] **Acceptance Criteria:**
+* [x] **Acceptance Criteria:**
   * `dotnet test tests/Sentinel.Domain.Tests` passes completely in < 1 second without Docker or database dependencies.
 
 ---
