@@ -63,16 +63,16 @@
 ## Milestone 3: Application Use Cases, Minimal APIs & Real-Time SignalR (`Sentinel.Application` & `Sentinel.Api`)
 **Goal:** Expose REST endpoints, automatic scenario seeding, OpenAPI/Scalar docs, and real-time SignalR notifications. (Ref: `ADR-003`, `ADR-004`)
 
-* [ ] **3.1 Application CQRS Commands & Queries**
+* [x] **3.1 Application CQRS Commands & Queries**
   * Implement handlers for `CreateWorkflowCommand`, `TriggerScenarioCommand`, `ApproveWorkflowCommand`, `RejectWorkflowCommand`, `GetWorkflowsQuery`, and `GetWorkflowByIdQuery`.
-* [ ] **3.2 Minimal API Endpoints & RFC 7807 Error Handling**
+* [x] **3.2 Minimal API Endpoints & RFC 7807 Error Handling**
   * Expose `/api/workflows`, `/api/workflows/{id}`, `/api/workflows/{id}/approve`, `/api/workflows/{id}/reject`, and `/api/scenarios/{scenarioKey}/trigger`.
   * Map domain/concurrency errors cleanly (`400 Bad Request`, `404 Not Found`, `409 Conflict` via `ProblemDetails`).
   * Enable .NET 10 built-in OpenAPI + Scalar UI (`/scalar/v1`).
-* [ ] **3.3 SignalR `WorkflowHub` & Automatic Seeding**
+* [x] **3.3 SignalR `WorkflowHub` & Automatic Seeding**
   * Broadcast `WorkflowUpdated` and `ApprovalRequested` events to connected clients upon state changes.
   * Implement startup database migration + seeder with the 3 showcase scenarios (`Auto-Allowed`, `Human-in-the-Loop`, `BlockedByPolicy`).
-* [ ] **Acceptance Criteria:**
+* [x] **Acceptance Criteria:**
   * Triggering scenarios via Scalar/HTTP executes workflows end-to-end, persists audit logs, and emits SignalR events.
 
 ---

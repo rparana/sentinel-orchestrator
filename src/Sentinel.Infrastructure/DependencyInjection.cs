@@ -54,6 +54,7 @@ public static class DependencyInjection
         }
 
         services.AddSingleton<IPolicyEvaluator, DeterministicPolicyEngine>();
+        services.AddScoped<IWorkflowRepository, EfWorkflowRepository>();
         services.AddScoped<IStepExecutor, IdempotentStepExecutor>();
         services.TryAddSingleton<IWorkflowNotificationPublisher, NoOpWorkflowNotificationPublisher>();
 
