@@ -1,0 +1,11 @@
+namespace Sentinel.Infrastructure.Planners;
+
+public sealed class AgentPlannerOptions
+{
+    public const string SectionName = "AgentPlanner";
+
+    public string Provider { get; set; } = "Mock";
+    public string OllamaEndpoint { get; set; } = "http://localhost:11434";
+    public string Model { get; set; } = "llama3.2";
+    public int SimulatedLatencyMs { get; set; } = 75;
+}

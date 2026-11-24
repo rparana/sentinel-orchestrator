@@ -1,4 +1,5 @@
 using Sentinel.Domain.Enums;
+using Sentinel.Domain.Events;
 using Sentinel.Domain.Exceptions;
 using Sentinel.Domain.Policies;
 using Sentinel.Domain.ValueObjects;
@@ -9,6 +10,7 @@ public sealed class WorkflowInstance
 {
     private readonly List<WorkflowStep> _steps = [];
     private readonly List<WorkflowAuditEntry> _auditEntries = [];
+    private readonly List<IDomainEvent> _domainEvents = [];
 
     public Guid Id { get; private set; }
     public string Name { get; private set; } = string.Empty;
@@ -22,6 +24,9 @@ public sealed class WorkflowInstance
 
     public IReadOnlyList<WorkflowStep> Steps => _steps.AsReadOnly();
     public IReadOnlyList<WorkflowAuditEntry> AuditEntries => _auditEntries.AsReadOnly();
+    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+
+    public void ClearDomainEvents() => _domainEvents.Clear();
 
     public WorkflowStep? CurrentStep =>
         CurrentStepIndex >= 0 && CurrentStepIndex < _steps.Count
@@ -118,6 +123,12 @@ public sealed class WorkflowInstance
             Status,
             $"Started execution at step 0 ('{CurrentStep.Name}').",
             now);
+
+        _domainEvents.Add(new WorkflowStepReadyForPlanningDomainEvent(
+            Guid.NewGuid(),
+            now,
+            Id,
+            CurrentStepIndex));
     }
 
     public PolicyDecision SubmitProposalAndEvaluatePolicy(
@@ -182,6 +193,33 @@ public sealed class WorkflowInstance
             $"Verdict={decision.Verdict} Rule='{decision.RuleName}': {decision.Reason}",
             evalTime);
 
+        switch (Status)
+        {
+            case WorkflowStatus.ExecutingStep:
+                _domainEvents.Add(new WorkflowStepReadyForExecutionDomainEvent(
+                    Guid.NewGuid(),
+                    evalTime,
+                    Id,
+                    CurrentStepIndex,
+                    Attempt: 1));
+                break;
+            case WorkflowStatus.AwaitingApproval:
+                _domainEvents.Add(new WorkflowAwaitingApprovalDomainEvent(
+                    Guid.NewGuid(),
+                    evalTime,
+                    Id,
+                    CurrentStepIndex,
+                    decision.RuleName));
+                break;
+            case WorkflowStatus.BlockedByPolicy:
+                _domainEvents.Add(new WorkflowTerminalStateReachedDomainEvent(
+                    Guid.NewGuid(),
+                    evalTime,
+                    Id,
+                    WorkflowStatus.BlockedByPolicy));
+                break;
+        }
+
         return decision;
     }
 
@@ -213,6 +251,13 @@ public sealed class WorkflowInstance
             Status,
             $"Approved step '{CurrentStep.Name}': {comment.Trim()}",
             now);
+
+        _domainEvents.Add(new WorkflowStepReadyForExecutionDomainEvent(
+            Guid.NewGuid(),
+            now,
+            Id,
+            CurrentStepIndex,
+            Attempt: 1));
     }
 
     public void Reject(string operatorName, string comment)
@@ -244,6 +289,12 @@ public sealed class WorkflowInstance
             Status,
             $"Rejected step '{CurrentStep.Name}': {comment.Trim()}",
             now);
+
+        _domainEvents.Add(new WorkflowTerminalStateReachedDomainEvent(
+            Guid.NewGuid(),
+            now,
+            Id,
+            WorkflowStatus.Rejected));
     }
 
     public void CompleteCurrentStep(string? outputJson = null, string actor = "worker")
@@ -270,6 +321,12 @@ public sealed class WorkflowInstance
                 Status,
                 $"Completed step '{step.Name}'. Advancing to step {CurrentStepIndex} ('{CurrentStep.Name}').",
                 now);
+
+            _domainEvents.Add(new WorkflowStepReadyForPlanningDomainEvent(
+                Guid.NewGuid(),
+                now,
+                Id,
+                CurrentStepIndex));
         }
         else
         {
@@ -283,6 +340,12 @@ public sealed class WorkflowInstance
                 Status,
                 $"Completed final step '{step.Name}'. Workflow finished.",
                 now);
+
+            _domainEvents.Add(new WorkflowTerminalStateReachedDomainEvent(
+                Guid.NewGuid(),
+                now,
+                Id,
+                WorkflowStatus.Completed));
         }
     }
 
@@ -314,6 +377,12 @@ public sealed class WorkflowInstance
             Status,
             $"Step '{step.Name}' failed: {errorMessage.Trim()}",
             now);
+
+        _domainEvents.Add(new WorkflowTerminalStateReachedDomainEvent(
+            Guid.NewGuid(),
+            now,
+            Id,
+            WorkflowStatus.Failed));
     }
 
     private void EnsureStatus(WorkflowStatus expectedStatus, string actionName)

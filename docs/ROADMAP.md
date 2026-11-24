@@ -44,18 +44,18 @@
 ## Milestone 2: Persistence, Transactional Outbox & Concurrency (`Sentinel.Infrastructure`)
 **Goal:** Implement PostgreSQL persistence, EF Core mappings with `xmin` optimistic concurrency, Transactional Outbox, and Redis idempotency locks. (Ref: `ADR-002`)
 
-* [ ] **2.1 EF Core DbContext & Migrations**
+* [x] **2.1 EF Core DbContext & Migrations**
   * Configure `SentinelDbContext` with PostgreSQL mappings for `WorkflowInstance`, `WorkflowAuditEntry`, and `OutboxMessage`.
   * Map `WorkflowInstance.RowVersion` to PostgreSQL `xmin` system column for optimistic concurrency.
-* [ ] **2.2 Transactional Outbox & Background Worker**
+* [x] **2.2 Transactional Outbox & Background Worker**
   * Intercept domain state transitions to persist `OutboxMessage` records atomically within the same `SaveChangesAsync` transaction.
   * Implement `OutboxProcessorWorker` using PostgreSQL `FOR UPDATE SKIP LOCKED` to dispatch step execution jobs safely across concurrent workers.
-* [ ] **2.3 Pluggable Agent Planner & Step Executors**
+* [x] **2.3 Pluggable Agent Planner & Step Executors**
   * Implement `IAgentPlanner` with `DeterministicMockPlanner` (default zero-dependency realistic planner) and optional `OllamaAgentPlanner`.
   * Implement `IStepExecutor` with Redis idempotency guard (`{WorkflowId}:{StepIndex}:{Attempt}`).
-* [ ] **2.4 Integration Tests (`Sentinel.Integration.Tests`)**
+* [x] **2.4 Integration Tests (`Sentinel.Integration.Tests`)**
   * Use `Testcontainers.PostgreSql` and `Testcontainers.Redis` to verify atomic outbox persistence, worker recovery, and `DbUpdateConcurrencyException` on simultaneous approvals.
-* [ ] **Acceptance Criteria:**
+* [x] **Acceptance Criteria:**
   * `dotnet test tests/Sentinel.Integration.Tests` passes against real PostgreSQL and Redis containers.
 
 ---
