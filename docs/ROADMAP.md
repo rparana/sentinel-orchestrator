@@ -96,10 +96,10 @@
 ## Milestone 5: Polish, Docker Compose Fallback & Portfolio Readiness
 **Goal:** Ensure frictionless onboarding for technical reviewers and recruiters inspecting the repository.
 
-* [ ] **5.1 Standalone `docker-compose.yml`**
+* [x] **5.1 Standalone `docker-compose.yml`**
   * Provide a pure-Docker Compose file (`postgres`, `redis`, `api`, `web`) for reviewers running without .NET Aspire workloads installed.
-* [ ] **5.2 End-to-End Smoke Verification & README Polish**
+* [x] **5.2 End-to-End Smoke Verification & README Polish**
   * Verify cold-start execution (`docker compose up --build` and `dotnet run --project src/Sentinel.AppHost`).
   * Add UI screenshots / GIFs and OpenTelemetry trace examples to `README.md`.
-* [ ] **Acceptance Criteria:**
+* [x] **Acceptance Criteria:**
   * A fresh clone runs cleanly in 1 command and demonstrates all 3 scenarios end-to-end.

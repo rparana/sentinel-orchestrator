@@ -160,6 +160,38 @@ dotnet test tests/Sentinel.Integration.Tests
 pnpm --dir src/sentinel-web test
 ```
 
+## 📊 Observability & Distributed Tracing (OpenTelemetry)
+
+`Sentinel.ServiceDefaults` wires OpenTelemetry tracing, metrics, and structured logging across `Sentinel.Api`, `OutboxProcessorWorker`, PostgreSQL, and HTTP calls. In the `.NET Aspire` Dashboard (`http://localhost:15888`), triggering a scenario produces a correlated waterfall trace:
+
+```text
+traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+├── POST /api/scenarios/prod-scale/trigger         [Sentinel.Api]             18.4 ms
+│   ├── INSERT workflows, workflow_steps, audit    [PostgreSQL: sentineldb]    6.2 ms
+│   └── INSERT outbox_messages (atomic commit)     [PostgreSQL: sentineldb]    2.1 ms
+├── OutboxProcessorWorker.ProcessBatchAsync        [Sentinel.Infrastructure]  41.7 ms
+│   ├── SELECT ... FOR UPDATE SKIP LOCKED          [PostgreSQL: sentineldb]    3.4 ms
+│   ├── DeterministicMockPlanner.ProposeAction     [IAgentPlanner]             1.8 ms
+│   ├── DeterministicPolicyEngine.Evaluate         [Sentinel.Domain]           0.4 ms
+│   └── SignalR Hub: ApprovalRequested             [WorkflowHub]               4.9 ms
+└── POST /api/workflows/{id}/approve               [Sentinel.Api]             14.1 ms
+    ├── UPDATE workflows (xmin concurrency check)  [PostgreSQL: sentineldb]    3.8 ms
+    └── IdempotentStepExecutor (SET NX lock)       [Redis: 6379]               1.5 ms
+```
+
+## 🖥️ Control Plane UI (`sentinel-web`)
+
+The Angular 22 Zoneless + Signals Control Plane (`http://localhost:4200`) provides:
+* **Live KPI Summary & Scenario Trigger Bar:** One-click launch of `auto-triage`, `prod-scale`, and `blocked-delete` scenarios.
+* **Real-Time SignalR Feed:** Sub-second status transitions (`WorkflowUpdated` / `ApprovalRequested`) with automatic reconnect and state resync.
+* **Workflow Execution Inspector & HITL Drawer:** Step-by-step timeline, `ActionProposal` & `OutputJson` viewer, Policy Engine decision banner, chronological audit log, and Approve/Reject controls with graceful `409 Conflict` handling.
+
+### Live Dashboard & Scenario Trigger Bar
+![Sentinel Orchestrator Live Dashboard](docs/images/dashboard.png)
+
+### Workflow Execution Inspector & Human-in-the-Loop Approval
+![Sentinel Orchestrator HITL Inspector Drawer](docs/images/inspector-hitl.png)
+
 ## 👤 Author
 **Rafael Paraná** — Platform Engineering Tech Lead & Full-Stack Architect
 
