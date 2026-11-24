@@ -80,15 +80,15 @@
 ## Milestone 4: Reactive Control Plane UI (`sentinel-web` — Angular 22)
 **Goal:** Build a modern, zoneless Angular 22 control plane powered by Signals and SignalR to inspect workflows and manage Human-in-the-Loop approvals. (Ref: `ADR-003`)
 
-* [ ] **4.1 SignalR Service & Signal-Based Feature Store**
+* [x] **4.1 SignalR Service & Signal-Based Feature Store**
   * Create `WorkflowSignalRService` with automatic reconnect and state resync.
   * Create `WorkflowStore` using Angular `signal()` and `computed()` (`activeWorkflows`, `pendingApprovals`, `blockedWorkflows`).
-* [ ] **4.2 Live Dashboard & Scenario Trigger Bar**
+* [x] **4.2 Live Dashboard & Scenario Trigger Bar**
   * Build KPI summary cards, real-time workflow feed with status badges, and one-click buttons to trigger the 3 showcase scenarios.
-* [ ] **4.3 Workflow Execution Inspector & HITL Approval Modal/Drawer**
+* [x] **4.3 Workflow Execution Inspector & HITL Approval Modal/Drawer**
   * Display step-by-step timeline, input/output JSON viewer, Policy Engine decision banner, and chronological audit log.
   * Implement **Approve / Reject** panel with mandatory operator comment and graceful `409 Conflict` handling.
-* [ ] **Acceptance Criteria:**
+* [x] **Acceptance Criteria:**
   * Triggering the "High Risk Production" scenario in the UI pauses at `AwaitingApproval` in real time, displays the approval prompt without page refresh, and completes immediately upon operator approval.
 
 ---
