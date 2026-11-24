@@ -195,4 +195,4 @@ The Angular 22 Zoneless + Signals Control Plane (`http://localhost:4200`) provid
 ## 👤 Author
 **Rafael Paraná** — Platform Engineering Tech Lead & Full-Stack Architect
 
-[LinkedIn](https://www.linkedin.com/in/rafaelparana/) • [GitHub](https://github.com/rparana)
+[Portfolio](https://rafaelparana.me/) • [LinkedIn](https://rparana.me/linkedin) • [GitHub](https://rparana.me/github)
